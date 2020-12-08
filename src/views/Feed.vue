@@ -1,7 +1,8 @@
 <template>
   <v-container class="py-8 px-6" fluid>
+    <v-col>{{ feed }}</v-col>
     <v-row>
-      <v-col v-for="(feed, url, i) in feeds" :key="url" cols="12">
+      <!-- <v-col v-for="(feed, url, i) in feeds" :key="url" cols="12">
 	<slide-y-reverse-transition>
         <v-card rounded hover>
           <v-subheader>{{ url }}</v-subheader>
@@ -23,7 +24,7 @@
           </v-list>
         </v-card>
 	</slide-y-reverse-transition>
-      </v-col>
+      </v-col> -->
     </v-row>
   </v-container>
 </template>
@@ -34,13 +35,28 @@
 import { mapState } from 'vuex';
 
 export default {
-  name: "Home",
+  name: "Feed",
+  props: ["url"],
   data: () => ({
-    cards: ["Today", "Yesterday"],
+    feed: {},
   }),
+  methods: {
+    getFeed(url) {
+      let foundSource = this.sources.find(el => el.includes(url));
+      this.feed = this.feeds[url] || {};
+    }
+  },
   computed: mapState({
-    loading: state => state.loading,
+    sources: state => state.sources,
     feeds: state => state.feeds,
   }),
+  watch:{
+    $route (to, from){
+      this.getFeed(this.url);
+    }
+  },
+  mounted() {
+    this.getFeed(this.url);
+  }
 };
 </script>
